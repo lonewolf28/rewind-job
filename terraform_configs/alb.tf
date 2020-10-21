@@ -2,13 +2,13 @@
 
 
 resource "aws_alb" "dev" {
-  name            = "dev_flask_app_alb"
+  name            = "dev-flask-alb"
   subnets         = aws_subnet.public.*.id
   security_groups = [aws_security_group.lb.id]
 }
 
 resource "aws_alb_target_group" "flask_app" {
-  name        = "flask_app_target_group"
+  name        = "dev-flask-app-target-group"
   port        = var.app_port
   protocol    = "HTTP"
   vpc_id      = aws_vpc.this.id
