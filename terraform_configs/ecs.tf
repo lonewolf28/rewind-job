@@ -1,12 +1,12 @@
 
 
 
-resource "aws_ecs_cluster" "flask-app" {
-  name = "dev-flask-app"
+resource "aws_ecs_cluster" "flask_app" {
+  name = "dev_flask_app"
 }
 
-data "template_file" "flask-app" {
-  template = file("./templates/ecs/flask-app.json.tpl")
+data "template_file" "flask_app" {
+  template = file("./templates/ecs/flask_app.json.tpl")
 
   vars = {
     app_image      = var.app_image
@@ -17,20 +17,20 @@ data "template_file" "flask-app" {
   }
 }
 
-resource "aws_ecs_task_definition" "flask-app" {
-  family                   = "flask-app-task"
+resource "aws_ecs_task_definition" "flask_app" {
+  family                   = "flask_app_task"
   execution_role_arn       = aws_iam_role.ecs_task_execution_role.arn
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = var.fargate_cpu
   memory                   = var.fargate_memory
-  container_definitions    = data.template_file.flask-app.rendered
+  container_definitions    = data.template_file.flask_app.rendered
 }
 
-resource "aws_ecs_service" "flask-app" {
-  name            = "flask-app-service"
-  cluster         = aws_ecs_cluster.flask-app.id
-  task_definition = aws_ecs_task_definition.flask-app.arn
+resource "aws_ecs_service" "flask_app" {
+  name            = "flask_app_service"
+  cluster         = aws_ecs_cluster.flask_app.id
+  task_definition = aws_ecs_task_definition.flask_app.arn
   desired_count   = var.app_count
   launch_type     = "FARGATE"
 
@@ -41,8 +41,8 @@ resource "aws_ecs_service" "flask-app" {
   }
 
   load_balancer {
-    target_group_arn = aws_alb_target_group.flask-app.id
-    container_name   = "dev-flask-app"
+    target_group_arn = aws_alb_target_group.flask_app.id
+    container_name   = "dev_flask_app"
     container_port   = var.app_port
   }
 

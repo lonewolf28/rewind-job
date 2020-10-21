@@ -14,22 +14,22 @@ resource "aws_vpc" "this" {
   enable_dns_hostnames = true
 
   tags = {
-    Name = "main-dev-vpc"
+    Name = "main_dev_vpc"
     Environment = "dev"
   }
 }
 
 
 resource "aws_subnet" "public" {
-  count      = length(var.subnet-dev-public)
-  cidr_block = element(var.subnet-dev-public, count.index)
+  count      = length(var.subnet_dev_public)
+  cidr_block = element(var.subnet_dev_public, count.index)
   vpc_id     = aws_vpc.this.id
 
   map_public_ip_on_launch = true
   availability_zone       = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "public-subnets"
+    Name = "public_subnets"
     Environment = "dev"
   }
 }
@@ -37,13 +37,13 @@ resource "aws_subnet" "public" {
 
 
 resource "aws_subnet" "private" {
-  count      = length(var.subnet-dev-private)
-  cidr_block = element(var.subnet-dev-private, count.index)
+  count      = length(var.subnet_dev_private)
+  cidr_block = element(var.subnet_dev_private, count.index)
   vpc_id     = aws_vpc.this.id
   availability_zone  = data.aws_availability_zones.available.names[count.index]
 
   tags = {
-    Name = "private-subnets"
+    Name = "private_subnets"
     Environment = "dev"
   }
 }
@@ -54,7 +54,7 @@ resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.this.id
 
   tags = {
-    Name = "main-dev-igw"
+    Name = "main_dev_igw"
     Environment = "dev"
   }
 }
@@ -64,7 +64,7 @@ resource "aws_eip" "nat" {
   vpc = true
 
   tags = {
-    Name = "private-nat-eip"
+    Name = "private_nat_eip"
   }
 }
 
@@ -74,7 +74,7 @@ resource "aws_nat_gateway" "this" {
   subnet_id     =  aws_subnet.public[0].id
 
   tags = {
-    Name = "main-dev-private-nat-gw"
+    Name = "main_dev_private_nat_gw"
   }
   depends_on = [
       aws_subnet.public,
@@ -86,7 +86,7 @@ resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.this.id
 
   tags = {
-    Name = "main-dev-private-route"
+    Name = "main_dev_private_route"
   }
 }
 
@@ -120,7 +120,7 @@ resource "aws_route_table" "public_route_table" {
   }
 
   tags = {
-    Name = "main-dev-public-route"
+    Name = "main_dev_public_route"
   }
 }
 

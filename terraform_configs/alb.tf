@@ -2,13 +2,13 @@
 
 
 resource "aws_alb" "dev" {
-  name            = "dev-flask-app-alb"
+  name            = "dev_flask_app_alb"
   subnets         = aws_subnet.public.*.id
   security_groups = [aws_security_group.lb.id]
 }
 
-resource "aws_alb_target_group" "flask-app" {
-  name        = "flask-app-target-group"
+resource "aws_alb_target_group" "flask_app" {
+  name        = "flask_app_target_group"
   port        = var.app_port
   protocol    = "HTTP"
   vpc_id      = aws_vpc.this.id
@@ -34,7 +34,7 @@ resource "aws_alb_listener" "front_end" {
   certificate_arn   = "arn:aws:iam::837964143932:server-certificate/CSC"
 
   default_action {
-    target_group_arn = aws_alb_target_group.flask-app.id
+    target_group_arn = aws_alb_target_group.flask_app.id
     type             = "forward"
   }
 }

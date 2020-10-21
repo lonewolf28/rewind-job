@@ -1,5 +1,5 @@
-resource "aws_sns_topic" "ecs-cpu-usage" {
-  name = "ecs-cpu-topic"
+resource "aws_sns_topic" "ecs_cpu_usage" {
+  name = "ecs_cpu_topic"
   delivery_policy = <<EOF
 {
   "http": {
@@ -36,8 +36,8 @@ resource "aws_cloudwatch_metric_alarm" "cpu_high_alarm" {
   threshold           = "90"
 
   dimensions = {
-    ServiceName = aws_ecs_service.flask-app.name
+    ServiceName = aws_ecs_service.flask_app.name
   }
 
-  alarm_actions = [ aws_sns_topic.ecs-cpu-usage.arn ]
+  alarm_actions = [ aws_sns_topic.ecs_cpu_usage.arn ]
 }
