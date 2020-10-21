@@ -1,8 +1,11 @@
-variable "vpc_dev_cidr" {
-    type = string
-    default = "10.10.0.0/16"
-}
 
+variable "vpc_cidr" {
+    type = map
+    default = {
+      prod = "10.100.0.0/16"
+      dev = "10.1.0.0/16"
+    }
+}
 
 ############################
 # CIDR for public is odd   #
@@ -10,21 +13,48 @@ variable "vpc_dev_cidr" {
 ############################
 
 
-variable "subnet_dev_public" {
-    type =  list(string)
-    default = [
-        "10.10.1.0/24", 
-        "10.10.3.0/24"
+
+variable prod_subnet_list {
+   type =  map
+    default = {
+    public = [ 
+      "10.100.5.0/24", 
+      "10.100.7.0/24"
     ]
+
+    private = [
+       "10.100.6.0/24", 
+      "10.100.8.0/24"
+    ] }
+        
 }
 
-variable "subnet_dev_private" {
-    type =  list(string)
-    default = [
-        "10.10.2.0/24", 
-        "10.10.4.0/24"
+
+variable dev_subnet_list {
+   type =  map
+    default = {
+    public = [ 
+      "10.1.1.0/24", 
+      "10.1.3.0/24"
     ]
+
+    private = [
+       "10.1.2.0/24", 
+      "10.1.4.0/24"
+    ] }   
 }
+
+locals {
+  env = terraform.workspace
+}
+
+locals {
+  subnet_private = local.env == "prod" ? var.prod_subnet_list.private : var.dev_subnet_list.private
+  subnet_public = local.env == "prod" ? var.prod_subnet_list.public : var.dev_subnet_list.public
+  cidr =  local.env == "prod" ? var.vpc_cidr.prod : var.vpc_cidr.dev 
+}
+
+
 
 variable "app_port" {
   description = "Docker container port #"
@@ -70,4 +100,11 @@ variable "alarms_email" {
   description = "Email for CPU high usage in ECS"
   default = "rajbarath@disroot.org"
 }
+
+variable "prefix" {
+  description = "This is the environment where your webapp is deployed. qa, prod, or dev"
+}
+
+
+
 

@@ -2,7 +2,7 @@
 
 
 resource "aws_ecs_cluster" "flask_app" {
-  name = "dev_flask_app"
+  name = "flask_app"
 }
 
 data "template_file" "flask_app" {
@@ -42,7 +42,7 @@ resource "aws_ecs_service" "flask_app" {
 
   load_balancer {
     target_group_arn = aws_alb_target_group.flask_app.id
-    container_name   = "dev_flask_app"
+    container_name   = "flask_app"
     container_port   = var.app_port
   }
 

@@ -2,7 +2,7 @@
 
 # ALB security group
 resource "aws_security_group" "lb" {
-  name        = "dev_flask_app_alb_security_group"
+  name        = "flask_app_alb_security_group"
   description = "controls access to the ALB"
   vpc_id      = aws_vpc.this.id
 
@@ -23,7 +23,7 @@ resource "aws_security_group" "lb" {
 
 # Limiting traffic to ECS only from ALB
 resource "aws_security_group" "ecs_tasks" {
-  name        = "dev_flask_app_ecs_tasks_security_group"
+  name        = "flask_app_ecs_tasks_security_group"
   description = "allow inbound access from the ALB only"
   vpc_id      = aws_vpc.this.id
 

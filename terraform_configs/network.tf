@@ -8,21 +8,21 @@ data "aws_availability_zones" "available" {}
 
 
 resource "aws_vpc" "this" {
-  cidr_block = var.vpc_dev_cidr
+  cidr_block = local.cidr
 
   enable_dns_support   = true
   enable_dns_hostnames = true
 
   tags = {
-    Name = "main_dev_vpc"
-    Environment = "dev"
+    Name = "main_vpc"
+    Environment = terraform.workspace
   }
 }
 
 
 resource "aws_subnet" "public" {
-  count      = length(var.subnet_dev_public)
-  cidr_block = element(var.subnet_dev_public, count.index)
+  count      = length(local.subnet_public)
+  cidr_block = element(local.subnet_public, count.index)
   vpc_id     = aws_vpc.this.id
 
   map_public_ip_on_launch = true
@@ -30,21 +30,21 @@ resource "aws_subnet" "public" {
 
   tags = {
     Name = "public_subnets"
-    Environment = "dev"
+    Environment = terraform.workspace
   }
 }
 
 
 
 resource "aws_subnet" "private" {
-  count      = length(var.subnet_dev_private)
-  cidr_block = element(var.subnet_dev_private, count.index)
+  count      = length(local.subnet_private)
+  cidr_block = element(local.subnet_private, count.index)
   vpc_id     = aws_vpc.this.id
   availability_zone  = data.aws_availability_zones.available.names[count.index]
 
   tags = {
     Name = "private_subnets"
-    Environment = "dev"
+    Environment = terraform.workspace
   }
 }
 
@@ -54,8 +54,8 @@ resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.this.id
 
   tags = {
-    Name = "main_dev_igw"
-    Environment = "dev"
+    Name = "main_igw"
+    Environment = terraform.workspace
   }
 }
 
@@ -74,7 +74,7 @@ resource "aws_nat_gateway" "this" {
   subnet_id     =  aws_subnet.public[0].id
 
   tags = {
-    Name = "main_dev_private_nat_gw"
+    Name = "main_private_nat_gw"
   }
   depends_on = [
       aws_subnet.public,
@@ -86,7 +86,7 @@ resource "aws_route_table" "private_route_table" {
   vpc_id = aws_vpc.this.id
 
   tags = {
-    Name = "main_dev_private_route"
+    Name = "main_private_route"
   }
 }
 
@@ -120,7 +120,7 @@ resource "aws_route_table" "public_route_table" {
   }
 
   tags = {
-    Name = "main_dev_public_route"
+    Name = "main_public_route"
   }
 }
 
