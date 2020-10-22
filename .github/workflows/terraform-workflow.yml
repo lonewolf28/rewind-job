@@ -12,21 +12,21 @@ jobs:
     path-context:
       runs-on: ubuntu-latest
       steps:
-        - name: Checkout
+        - id: nCheckout
           uses: actions/checkout@v2
           
-        - name: Set up QEMU
+        - id: Set up QEMU
           uses: docker/setup-qemu-action@v1
           
-        - name: Set up Docker Buildx
+        - id: Set up Docker Buildx
           uses: docker/setup-buildx-action@v1
           
-        - name: Login to DockerHub
+        - id: Login to DockerHub
           uses: docker/login-action@v1
           with:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
-        - name: Build and push
+        - id: Build and push
           uses: docker/build-push-action@v2
           with:
             context: ./app
@@ -41,10 +41,10 @@ jobs:
       name: Workflow
       runs-on: ubuntu-latest
       steps:
-      - name: Checkout Repo
+      - id: Checkout Repo
         uses: actions/checkout@master
 
-      - name: Terraform - Init
+      - id: Terraform - Init
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.13.0
@@ -56,7 +56,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Terraform - Validate
+      - id: Terraform - Validate
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.13.0
@@ -66,7 +66,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Terraform - Plan
+      - id: Terraform - Plan
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.13.0
