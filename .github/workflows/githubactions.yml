@@ -25,11 +25,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       -
         name: Build and push
-        working-directory: ./app
         uses: docker/build-push-action@v2
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./app
+          file: ./app/Dockerfile
           platforms: linux/amd64,linux/arm64,linux/386
           push: true
           tags: rajbarath/flask-app:latest
