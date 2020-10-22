@@ -32,3 +32,19 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/386
           push: true
           tags: rajbarath/flask-app:latest
+      -
+         name: Set up Terraform
+         uses: hashicorp/setup-terraform@v1
+         working-directory: ./terraform
+         with:
+           terraform_version: 0.13.0     
+           
+           id: Terraform Init
+           run: terraform init
+           
+           id: Terraform Plan
+           run: terraform plan 
+           
+           id: Terraform Apply
+           run: terraform apply       
+  
