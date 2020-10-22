@@ -9,36 +9,36 @@ on:
 
 jobs:
   
-  job1:
-    runs-on: ubuntu-latest
-    name: Build Docker
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+#   job1:
+#     runs-on: ubuntu-latest
+#     name: Build Docker
+#     steps:
+#       - name: Checkout
+#         uses: actions/checkout@v2
         
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
+#       - name: Set up QEMU
+#         uses: docker/setup-qemu-action@v1
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+#       - name: Set up Docker Buildx
+#         uses: docker/setup-buildx-action@v1
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#       - name: Login to DockerHub
+#         uses: docker/login-action@v1
+#         with:
+#           username: ${{ secrets.DOCKERHUB_USERNAME }}
+#           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-          context: ./app
-          file: ./app/Dockerfile
-          platforms: linux/amd64,linux/arm64,linux/386
-          push: true
-          tags: rajbarath/flask-app:latest
+#       - name: Build and push
+#         uses: docker/build-push-action@v2
+#         with:
+#           context: ./app
+#           file: ./app/Dockerfile
+#           platforms: linux/amd64,linux/arm64,linux/386
+#           push: true
+#           tags: rajbarath/flask-app:latest
 
   job2:
-    needs: job1
+    #needs: job1
     runs-on: ubuntu-latest
     name: Terraform
     steps:
@@ -61,7 +61,7 @@ jobs:
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.13.0
-          tf_actions_subcommand: 'valnameate'
+          tf_actions_subcommand: 'validate'
           tf_actions_working_dir: './terraform'
           tf_actions_comment: true
         env:
