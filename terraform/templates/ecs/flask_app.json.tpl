@@ -1,6 +1,6 @@
 [
   {
-    "name": "dev_flask_app",
+    "name": "flask_app",
     "image": "${app_image}",
     "cpu": ${fargate_cpu},
     "memory": ${fargate_memory},
