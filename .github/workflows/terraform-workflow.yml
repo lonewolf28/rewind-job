@@ -41,43 +41,42 @@ jobs:
     needs: job1
     runs-on: ubuntu-latest
     terraform-actions:
-      name: Terraform
-      
-      steps:
-        - name: Checkout Repo
-          uses: actions/checkout@master
+    name: Terraform
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
 
-        - name: Terraform - Init
-          uses: hashicorp/terraform-github-actions@master
-          with:
-            tf_actions_version: 0.13.0
-            tf_actions_subcommand: 'init'
-            tf_actions_working_dir: './terraform'
-            tf_actions_comment: true
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            AWS_ACCESS_KEY_name: ${{ secrets.AWS_ACCESS_KEY_name }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Terraform - Init
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.13.0
+          tf_actions_subcommand: 'init'
+          tf_actions_working_dir: './terraform'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_name: ${{ secrets.AWS_ACCESS_KEY_name }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-        - name: Terraform - Valnameate
-          uses: hashicorp/terraform-github-actions@master
-          with:
-            tf_actions_version: 0.13.0
-            tf_actions_subcommand: 'valnameate'
-            tf_actions_working_dir: './terraform'
-            tf_actions_comment: true
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Terraform - Valnameate
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.13.0
+          tf_actions_subcommand: 'valnameate'
+          tf_actions_working_dir: './terraform'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Terraform - Plan
-          uses: hashicorp/terraform-github-actions@master
-          with:
-            tf_actions_version: 0.13.0
-            tf_actions_subcommand: 'plan'
-            tf_actions_working_dir: './terraform'
-            tf_actions_comment: true
-            args: '-var="prefix=dev"'  
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            AWS_ACCESS_KEY_name: ${{ secrets.AWS_ACCESS_KEY_name }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      - name: Terraform - Plan
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.13.0
+          tf_actions_subcommand: 'plan'
+          tf_actions_working_dir: './terraform'
+          tf_actions_comment: true
+          args: '-var="prefix=dev"'  
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_name: ${{ secrets.AWS_ACCESS_KEY_name }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
