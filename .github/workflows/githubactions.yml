@@ -1,8 +1,7 @@
 name: ci
 
-on:
-  push:
-    branches: master
+on: [ push, pull ]
+branches: master
 
 jobs:
   path-context:
@@ -32,19 +31,61 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/386
           push: true
           tags: rajbarath/flask-app:latest
-      -
-         name: Set up Terraform
-         uses: hashicorp/setup-terraform@v1
-         working-directory: ./terraform
-         with:
-           terraform_version: 0.13.0     
-           
-           id: Terraform Init
-           run: terraform init
-           
-           id: Terraform Plan
-           run: terraform plan 
-           
-           id: Terraform Apply
-           run: terraform apply       
-  
+          
+          
+    terraform-actions:
+      name: Workflow
+      steps:
+      - name: Checkout Repo
+        uses: actions/checkout@master
+
+      - name: Terraform - Format
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.13
+          tf_actions_subcommand: 'fmt'
+          tf_actions_working_dir: '.'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TF_ACTION_WORKING_DIR: ./terraform
+
+      - name: Terraform - Init
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.13
+          tf_actions_subcommand: 'init'
+          tf_actions_working_dir: '.'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TF_ACTION_WORKING_DIR: ./terraform
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Terraform - Validate
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.13
+          tf_actions_subcommand: 'validate'
+          tf_actions_working_dir: '.'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TF_ACTION_WORKING_DIR: ./terraform
+
+      - name: Terraform - Plan
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.12.13
+          tf_actions_subcommand: 'plan'
+          tf_actions_working_dir: '.'
+          tf_actions_comment: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TF_ACTION_WORKING_DIR: ./terraform
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+
+
