@@ -30,8 +30,11 @@ aws iam upload-server-certificate --server-certificate-name CSC --certificate-bo
 
 
 #### CI/CI is configured using github actions
-* Push/Merge to the master branch will trigger the build 
-* The build will build docker container with the app and upload it to docker hub
+* Push/Merge/PR to the master branch will trigger the build 
+* The build will do the following
+    - Build and deploy docker to docker hub
+    - Run terraform scripts 
+* Both the above steps are configured using github actions
 * If you are making changes to the image, update the following value in the terraform/vars.tf file
 
 ```console
@@ -75,9 +78,27 @@ terraform apply -var-file=dev.tfvars
     - Scale up when the CPU => 85 for 120 seconds
     - Scale down when the CPU <= 10 for 120 seconds
 4. Application loadbalancer with target group
+    - it allows only access using https
 5. ECS task execution role attachment
 6. Cloudwatch - To capture the logs from the fargate 
-7. 
+7. Security group for ECS and ALB
+    - ECS allows access only from ALB
+    - ALB only https is open
+
+### ECS cluster are region specific, we can maintain high availablity by spinning the cluser across multiple AZ's
+### Monitor and alert when the load reaches beyond a set threshold in cloudwatch alarms 
+### It's higly scalable as we can add/remove fargate containers
+
+
+### I have commented the code in alarms.tf as it' executing aws cli command to subscribe an email
+### to the alert, however, in github actions I get the following error
+```console
+aws_sns_topic.ecs_cpu_usage: Provisioning with 'local-exec'...
+aws_sns_topic.ecs_cpu_usage (local-exec): Executing: ["/bin/sh" "-c" "aws sns subscribe --topic-arn arn:aws:sns:ca-central-1:xxxxxxxxx:ecs_cpu_topic --protocol email --notification-endpoint someemail@some.org"]
+aws_sns_topic.ecs_cpu_usage (local-exec): /bin/sh: aws: not found
+```
+### I'd need more time to fix this issue
+
 
 
 
