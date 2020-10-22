@@ -40,7 +40,6 @@ jobs:
   job2:
     needs: job1
     runs-on: ubuntu-latest
-    terraform-actions:
     name: Terraform
     steps:
       - name: Checkout Repo
