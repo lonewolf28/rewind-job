@@ -33,8 +33,9 @@ aws iam upload-server-certificate --server-certificate-name CSC --certificate-bo
 * Push/Merge/PR to the master branch will trigger the build 
 * The build will do the following
     - Build and deploy docker to docker hub
-    - Run terraform scripts 
-* Both the above steps are configured using github actions
+    - Use the docker image as the base for the fargate container
+    - Run terraform scripts to deploy the ECS Cluster
+* Both the above steps are configured using github actions see (rewind-job/.github/workflows/terraform-workflow.yml)
 * If you are making changes to the image, update the following value in the terraform/vars.tf file
 
 ```console
@@ -52,7 +53,8 @@ variable "app_image" {
 prod = 10.100.0.0/16
 dev = 10.1.0.0/16
 ```
-* Terraform uses dev and prod workspaces, and it dynamically chooses dev/prod cidr based on the selected workspace
+* Terraform uses dev and prod workspaces, and it dynamically chooses dev/prod cidr and subnets based on the selected           workspace or it selects based on the prefix(dev/prod) if it uses the default workspace. see below
+
 * The backend is configure with S3, tfstate files get saved there
 
 * To deploy the infrastructure 
@@ -67,8 +69,11 @@ terraform workspace select dev
 # To check the changes
 terraform plan
 
-#To apply he changes, if you have any variables specific to an environment add it to either dev/prod tfvars
-terraform apply -var-file=dev.tfvars
+#To apply the changes
+terraform apply -var="prefix=dev"
+#or
+terraform apply -var="prefix=prod"
+
 ```
 
 * The above steps will create the following
@@ -85,19 +90,21 @@ terraform apply -var-file=dev.tfvars
     - ECS allows access only from ALB
     - ALB only https is open
 
-### ECS cluster are region specific, we can maintain high availablity by spinning the cluser across multiple AZ's
-### Monitor and alert when the load reaches beyond a set threshold in cloudwatch alarms 
-### It's higly scalable as we can add/remove fargate containers
+* ECS cluster are region specific, we can maintain high availablity by spinning the cluser across multiple AZ's as well as regions
+* Monitor and alert( via email) when the load reaches beyond a set threshold in cloudwatch alarms 
+* It's highly scalable as we can add/remove fargate containers
 
 
-### I have commented the code in alarms.tf as it' executing aws cli command to subscribe an email
-### to the alert, however, in github actions I get the following error
+* I have commented the code in alarms.tf as it' executing aws cli command to subscribe an email
+  to the alert, however, in github actions I get the following error
+
 ```console
 aws_sns_topic.ecs_cpu_usage: Provisioning with 'local-exec'...
 aws_sns_topic.ecs_cpu_usage (local-exec): Executing: ["/bin/sh" "-c" "aws sns subscribe --topic-arn arn:aws:sns:ca-central-1:xxxxxxxxx:ecs_cpu_topic --protocol email --notification-endpoint someemail@some.org"]
 aws_sns_topic.ecs_cpu_usage (local-exec): /bin/sh: aws: not found
+
 ```
-### I'd need more time to fix this issue
+* I'd need more time to fix the above issue
 
 
 
