@@ -8,25 +8,27 @@ on:
 
 
 jobs:
+  
   job1:
     path-context:
       runs-on: ubuntu-latest
       steps:
-        - id: nCheckout
+        - name: nCheckout
           uses: actions/checkout@v2
           
-        - id: Set up QEMU
+        - name: Set up QEMU
           uses: docker/setup-qemu-action@v1
           
-        - id: Set up Docker Buildx
+        - name: Set up Docker Buildx
           uses: docker/setup-buildx-action@v1
           
-        - id: Login to DockerHub
+        - name: Login to DockerHub
           uses: docker/login-action@v1
           with:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_TOKEN }}
-        - id: Build and push
+        
+        - name: Build and push
           uses: docker/build-push-action@v2
           with:
             context: ./app
@@ -37,14 +39,14 @@ jobs:
 
   job2:
     needs: job1
+    runs-on: ubuntu-latest
     terraform-actions:
-      name: Workflow
-      runs-on: ubuntu-latest
       steps:
-      - id: Checkout Repo
+      
+      - name: Checkout Repo
         uses: actions/checkout@master
 
-      - id: Terraform - Init
+      - name: Terraform - Init
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.13.0
@@ -53,20 +55,20 @@ jobs:
           tf_actions_comment: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_ACCESS_KEY_name: ${{ secrets.AWS_ACCESS_KEY_name }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - id: Terraform - Validate
+      - name: Terraform - Valnameate
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.13.0
-          tf_actions_subcommand: 'validate'
+          tf_actions_subcommand: 'valnameate'
           tf_actions_working_dir: './terraform'
           tf_actions_comment: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - id: Terraform - Plan
+      - name: Terraform - Plan
         uses: hashicorp/terraform-github-actions@master
         with:
           tf_actions_version: 0.13.0
@@ -76,5 +78,5 @@ jobs:
           args: '-var="prefix=dev"'  
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_ACCESS_KEY_name: ${{ secrets.AWS_ACCESS_KEY_name }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
