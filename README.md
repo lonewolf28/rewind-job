@@ -55,7 +55,7 @@ dev = 10.1.0.0/16
 ```
 * Terraform uses dev and prod workspaces, and it dynamically chooses dev/prod cidr and subnets based on the selected           workspace or it selects based on the prefix(dev/prod) if it uses the default workspace. see below
 
-* The backend is configure with S3, tfstate files get saved there
+* The backend is configured with S3, tfstate files get saved there
 
 * To deploy the infrastructure 
 
