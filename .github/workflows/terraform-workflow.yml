@@ -57,16 +57,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           
-      - name: Terraform select workspace
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.13.0
-          tf_actions_subcommand: 'workspace'
-          tf_actions_working_dir: './terraform'
-          tf_actions_comment: true
-          args: 'select dev'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
       - name: Terraform - Validate
         uses: hashicorp/terraform-github-actions@master
@@ -90,3 +80,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          
+      - name: Terraform - Apply
+        uses: hashicorp/terraform-github-actions@master
+        with:
+          tf_actions_version: 0.13.0
+          tf_actions_subcommand: 'apply'
+          tf_actions_working_dir: './terraform'
+          tf_actions_comment: true
+          args: '-var="prefix=dev" -auto-approve'  
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ca-central-1
+          AWS_DEFAULT_OUTPUT: json
