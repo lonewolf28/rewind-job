@@ -13,72 +13,71 @@ jobs:
     runs-on: ubuntu-latest
     name: Build Docker
     steps:
-    - name: Checkout
+      - name: Checkout
         uses: actions/checkout@v2
         
-    - name: Set up QEMU
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
-        
-    - name: Set up Docker Buildx
+
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-        
-    - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-    
-    - name: Build and push
-        uses: docker/build-push-action@v2
-        with:
-        context: ./app
-        file: ./app/Dockerfile
-        platforms: linux/amd64,linux/arm64,linux/386
-        push: true
-        tags: rajbarath/flask-app:latest
+
+      - name: Login to DockerHub
+          uses: docker/login-action@v1
+          with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push
+          uses: docker/build-push-action@v2
+          with:
+          context: ./app
+          file: ./app/Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/386
+          push: true
+          tags: rajbarath/flask-app:latest
 
   job2:
     needs: job1
     runs-on: ubuntu-latest
     terraform-actions:
       name: Terraform
-
-      steps:
       
-      - name: Checkout Repo
-        uses: actions/checkout@master
+      steps:
+        - name: Checkout Repo
+          uses: actions/checkout@master
 
-      - name: Terraform - Init
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.13.0
-          tf_actions_subcommand: 'init'
-          tf_actions_working_dir: './terraform'
-          tf_actions_comment: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AWS_ACCESS_KEY_name: ${{ secrets.AWS_ACCESS_KEY_name }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        - name: Terraform - Init
+          uses: hashicorp/terraform-github-actions@master
+          with:
+            tf_actions_version: 0.13.0
+            tf_actions_subcommand: 'init'
+            tf_actions_working_dir: './terraform'
+            tf_actions_comment: true
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            AWS_ACCESS_KEY_name: ${{ secrets.AWS_ACCESS_KEY_name }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Terraform - Valnameate
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.13.0
-          tf_actions_subcommand: 'valnameate'
-          tf_actions_working_dir: './terraform'
-          tf_actions_comment: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        - name: Terraform - Valnameate
+          uses: hashicorp/terraform-github-actions@master
+          with:
+            tf_actions_version: 0.13.0
+            tf_actions_subcommand: 'valnameate'
+            tf_actions_working_dir: './terraform'
+            tf_actions_comment: true
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Terraform - Plan
-        uses: hashicorp/terraform-github-actions@master
-        with:
-          tf_actions_version: 0.13.0
-          tf_actions_subcommand: 'plan'
-          tf_actions_working_dir: './terraform'
-          tf_actions_comment: true
-          args: '-var="prefix=dev"'  
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          AWS_ACCESS_KEY_name: ${{ secrets.AWS_ACCESS_KEY_name }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        - name: Terraform - Plan
+          uses: hashicorp/terraform-github-actions@master
+          with:
+            tf_actions_version: 0.13.0
+            tf_actions_subcommand: 'plan'
+            tf_actions_working_dir: './terraform'
+            tf_actions_comment: true
+            args: '-var="prefix=dev"'  
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            AWS_ACCESS_KEY_name: ${{ secrets.AWS_ACCESS_KEY_name }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
