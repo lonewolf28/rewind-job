@@ -42,7 +42,7 @@ jobs:
         tf_actions_comment: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TF_ACTION_WORKING_DIR: ./terraform:  
+        TF_ACTION_WORKING_DIR: ./terraform
 
     - name: Terraform - Plan
       uses: hashicorp/terraform-github-actions@master
