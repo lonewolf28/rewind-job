@@ -8,7 +8,7 @@ on:
 
 
 jobs:
-  jobs1:
+  job1:
     path-context:
       runs-on: ubuntu-latest
       steps:
@@ -37,7 +37,8 @@ jobs:
             push: true
             tags: rajbarath/flask-app:latest
 
-  jobs2:
+  job2:
+    needs: job1
     terraform-plan:
       name: "Terraform Apply"
       runs-on: ubuntu-latest
